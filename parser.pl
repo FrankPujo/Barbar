@@ -1,8 +1,6 @@
 use strict;
 use warnings;
 
-my $p = chr( 156 );
-
 my $content;
 my $filename = "test.barb"; # <STDIN>
 open( my $fh, '<', $filename );
@@ -11,21 +9,38 @@ open( my $fh, '<', $filename );
     $content = <$fh>;
 }
 
- my @lines = split /\n/, $content;
+my @lines = split /\n/, $content;
 
 my $lines_num = scalar @lines;
 
 my $html_content;
+my %barbar_hash;
 
-for ( my $i = 0; $i < $lines_num; $i++ ) {
+for ( my $i = 1; $i < $lines_num; $i++ ) {
+
 	my $line = $lines[$i];
 	my @tokens = split / /, $line;
-	my $type = substr $tokens[0], 2;
-	print( "<$type>" );
+	my $relat = $tokens[0];
+	my $tag = $tokens[1];
+	my $id = $tokens[2];
 	my $tokens_num = scalar @ tokens;
-	#print( $tokens_num )
-	for ( my $j = 1; $j < $tokens_num; $j++ ) {
-		print( "$tokens[$j] " );
+
+	my $barbar_line = "";
+
+	for ( my $j = 3; $j < $tokens_num; $j++ ) {
+		$barbar_line = $barbar_line . $tokens[$j] . " ";
 	}
-	print( "</$type>\n" );
+	
+	#my %line_hash = { 'relat', $relat, 'tag', $tag, 'id', $id, 'content', $barbar_line };
+
+	#print( $line_hash{'relat'} );
+
+	print( "$relat\n" );
+	print( "$tag\n" );
+	print( "$id\n" );
+	print( $barbar_line );
+}
+
+sub convert_to_html {
+	 conversion
 }
