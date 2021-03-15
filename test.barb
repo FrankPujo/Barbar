@@ -1,2 +1,9 @@
 Barbar
-& h1 title none Incredible Title Again?
+> 1 title Incredible Title
+& p intro Introduction to you page
+& d content
+> 2 subt Subtitle of the page
+& p * First part of content of the page
+& q *
+& 2 subt2 Second subtitle of the page
+& p * Second part of content of the page
