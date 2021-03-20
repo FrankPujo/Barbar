@@ -12,17 +12,18 @@ open( my $fh, '<', $filename );
 # delete tabs from content
 $content =~ s/\t//g;
 
-my @old_lines = split /\n/, $content;
+my @lines = split /\n/, $content;
 
-my $old_lines_num = scalar @old_lines;
+my $lines_num = scalar @lines;
 
-my $html_content;
+
+my $html_content = "<html>\n";
 my @barb_content;
 
-for ( my $i = 1; $i < $old_lines_num; $i++ ) {
+for ( my $i = 1; $i < $lines_num; $i++ ) {
 
-	my $old_line = $old_lines[$i];
-	my @tokens = split / /, $old_line;
+	my $line = $lines[$i];
+	my @tokens = split / /, $line;
 	my $relat = $tokens[0];
 	my $tag = $tokens[1];
 	my $id = $tokens[2];
@@ -47,15 +48,21 @@ for ( my $i = 1; $i < $old_lines_num; $i++ ) {
 		$tag = "hr";
 	}
 
-	my $barbar_line = "";
+	if ( $id eq "*" ) {
+		$id = "";
+	}
+
+	my $barbar_text_line = "";
 
 	for ( my $j = 3; $j < $tokens_num; $j++ ) {
-		$barbar_line = $barbar_line . $tokens[$j] . " ";
+		$barbar_text_line = $barbar_text_line . $tokens[$j] . " ";
 	}
 	
-	my @line_arr = ( $relat, $tag, $id, $barbar_line );
-	print( "@line_arr \n" );
+	my @line_arr = ( $relat, $tag, $id, $barbar_text_line );
+	#print( "@line_arr \n" );
 	push( @line_arr, @barb_content );
+
+	$html_content = $html_content . "<" . $tag . " id=\"" . $id . "\">" . $barbar_text_line . "\n";
 
 	#    #    #    #    #    #    #    #    #    #    #    #    #
 	# hold closing tags
@@ -69,7 +76,21 @@ for ( my $i = 1; $i < $old_lines_num; $i++ ) {
 	#
 	# push( $new_hold, @hold )
 	# add element to hold array
+
+	# TO DO handle relations, indentation and closing tags
+
+	# final closing of all held tags
+	my $holding_tags = scalar @hold
+	# TO FIX 
+	#for ( my $k = $holding_tags; $k >= 0; $k-- ) {
+	#	$html_content = $html_content . $hold[$k];
+	#}
 }
 
-# TO DO create opening tags with IDs
-# TO DO handle relations, indentation and closing tags
+print( $html_content );
+
+# writing to file
+my $target_file = ">" . substr( $filename, -4 ) . ".html";
+open( FH, $target_file );
+print FH $html_content;
+close FH;
