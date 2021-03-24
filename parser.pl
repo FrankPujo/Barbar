@@ -19,6 +19,9 @@ my $lines_num = scalar @lines;
 
 my $html_content = "<html>\n";
 my @barb_content;
+my $close_html = "</html>";
+my @hold = ( $close_html );
+
 
 for ( my $i = 1; $i < $lines_num; $i++ ) {
 
@@ -46,6 +49,8 @@ for ( my $i = 1; $i < $lines_num; $i++ ) {
 		$tag = "!--";
 	} elsif ( $tag eq "q" ) {
 		$tag = "hr";
+	} elsif ( $tag eq "b" ) {
+		$tag = "body";
 	}
 
 	if ( $id eq "*" ) {
@@ -62,35 +67,32 @@ for ( my $i = 1; $i < $lines_num; $i++ ) {
 	#print( "@line_arr \n" );
 	push( @line_arr, @barb_content );
 
-	$html_content = $html_content . "<" . $tag . " id=\"" . $id . "\">" . $barbar_text_line . "\n";
+	$html_content = $html_content . "<" . $tag . " id=\"" . $id . "\">" . $barbar_text_line;
 
-	#    #    #    #    #    #    #    #    #    #    #    #    #
-	# hold closing tags
-	my $close_html = "</html>";
-	my @hold = ( $close_html );
-	# pop @hold
-	# access AND remove last element
-	#
-	# $new_hold changes everytime
-	# reassing AFTER pushing
-	#
-	# push( $new_hold, @hold )
-	# add element to hold array
+	############
 
-	# TO DO handle relations, indentation and closing tags
+	my $new_hold = $tag;
+	push( @hold, $new_hold );
 
-	# final closing of all held tags
-	my $holding_tags = scalar @hold
-	# TO FIX 
-	#for ( my $k = $holding_tags; $k >= 0; $k-- ) {
-	#	$html_content = $html_content . $hold[$k];
-	#}
+	if ( $relat eq "^" ) {
+		my $tempClosing = pop( @hold );
+		pop @hold;
+		$html_content = $html_content . "</" . $tempClosing . ">\n";
+		#my $tempClosing = pop( @hold );
+		#pop @hold;
+		#$html_content = $html_content . "</" . $tempClosing . ">\n";
+	} elsif ( $relat eq "&" ) {
+		$html_content = $html_content . "</" . $tag . ">\n";
+	} elsif ( $relat eq ">" ) {
+		$html_content = $html_content . "\n";
+	}
+
 }
 
 print( $html_content );
 
 # writing to file
-my $target_file = ">" . substr( $filename, -4 ) . ".html";
+my $target_file = ">" . substr( $filename, 0, -5 ) . ".html";
 open( FH, $target_file );
 print FH $html_content;
 close FH;
